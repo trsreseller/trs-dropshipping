@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>লগইন - TRS Drop Shipping</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="navbar">
+    <a href="index.html" class="brand">TRS Drop Shipping</a>
+    <nav id="navLinks"></nav>
+  </div>
+  <div class="container form-page">
+    <h1>লগইন</h1>
+    <form id="loginForm" class="form">
+      <label>ইমেইল</label>
+      <input type="email" id="email" required>
+      <label>পাসওয়ার্ড</label>
+      <input type="password" id="password" required>
+      <p id="errorMsg" class="error" style="display:none;"></p>
+      <button type="submit">লগইন করুন</button>
+    </form>
+    <p style="text-align:center;margin-top:10px;">একাউন্ট নেই? <a href="register.html">রেজিস্ট্রেশন করুন</a></p>
+  </div>
+
+  <script type="module">
+    import { initNav } from './nav.js';
+    import { auth, db } from './firebase-config.js';
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    initNav(null);
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.style.display = 'none';
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        const snap = await getDoc(doc(db, 'users', cred.user.uid));
+        const role = snap.exists() ? snap.data().role : 'CUSTOMER';
+        if (role === 'ADMIN') window.location.href = 'admin.html';
+        else if (role === 'DROPSHIPPER') window.location.href = 'dashboard.html';
+        else window.location.href = 'index.html';
+      } catch (err) {
+        errorMsg.textContent = 'ইমেইল বা পাসওয়ার্ড ভুল হয়েছে।';
+        errorMsg.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

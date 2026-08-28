@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>রেজিস্ট্রেশন - TRS Drop Shipping</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="navbar">
+    <a href="index.html" class="brand">TRS Drop Shipping</a>
+    <nav id="navLinks"></nav>
+  </div>
+  <div class="container form-page">
+    <h1>রেজিস্ট্রেশন</h1>
+    <form id="registerForm" class="form">
+      <label>নাম</label>
+      <input type="text" id="name" required>
+      <label>ইমেইল</label>
+      <input type="email" id="email" required>
+      <label>ফোন নাম্বার</label>
+      <input type="text" id="phone">
+      <label>পাসওয়ার্ড</label>
+      <input type="password" id="password" required minlength="6">
+      <label class="checkbox-row">
+        <input type="checkbox" id="isDropshipper">
+        আমি একজন ড্রপ শিপার হিসেবে রেজিস্ট্রেশন করতে চাই
+      </label>
+      <p id="errorMsg" class="error" style="display:none;"></p>
+      <button type="submit">রেজিস্ট্রেশন করুন</button>
+    </form>
+    <p style="text-align:center;margin-top:10px;">আগে থেকে একাউন্ট আছে? <a href="login.html">লগইন করুন</a></p>
+  </div>
+
+  <script type="module">
+    import { initNav } from './nav.js';
+    import { auth, db } from './firebase-config.js';
+    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    initNav(null);
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.style.display = 'none';
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('isDropshipper').checked ? 'DROPSHIPPER' : 'CUSTOMER';
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, 'users', cred.user.uid), {
+          name, email, phone, role, balance: 0, createdAt: new Date().toISOString()
+        });
+        if (role === 'DROPSHIPPER') window.location.href = 'dashboard.html';
+        else window.location.href = 'index.html';
+      } catch (err) {
+        if (err.code === 'auth/email-already-in-use') {
+          errorMsg.textContent = 'এই ইমেইল দিয়ে ইতিমধ্যে একাউন্ট আছে।';
+        } else if (err.code === 'auth/weak-password') {
+          errorMsg.textContent = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।';
+        } else {
+          errorMsg.textContent = 'রেজিস্ট্রেশন ব্যর্থ হয়েছে।';
+        }
+        errorMsg.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

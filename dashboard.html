@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ড্যাশবোর্ড - TRS Drop Shipping</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="navbar">
+    <a href="index.html" class="brand">TRS Drop Shipping</a>
+    <nav id="navLinks"></nav>
+  </div>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <h2>ড্রপ শিপার প্যানেল</h2>
+      <nav>
+        <a href="#" data-view="dashboard" class="navBtn">ড্যাশবোর্ড</a>
+        <a href="#" data-view="products" class="navBtn">প্রোডাক্ট</a>
+        <a href="#" data-view="orders" class="navBtn">আমার অর্ডার</a>
+        <a href="#" data-view="withdraw" class="navBtn">উইথড্র</a>
+      </nav>
+    </aside>
+    <section class="content">
+
+      <div id="view-dashboard" class="view">
+        <h1 id="welcomeMsg">স্বাগতম</h1>
+        <div class="stats-grid" id="statsGrid"><p>লোড হচ্ছে...</p></div>
+      </div>
+
+      <div id="view-products" class="view" style="display:none;">
+        <h1>সকল প্রোডাক্ট</h1>
+        <div class="grid" id="productGrid"><p>লোড হচ্ছে...</p></div>
+
+        <div id="orderForm" style="display:none; margin-top:20px;">
+          <h2 id="orderFormTitle">নতুন অর্ডার</h2>
+          <form id="oForm" class="form">
+            <input type="hidden" id="oProductId">
+            <div id="variantWrap" style="display:none;">
+              <label>ভ্যারিয়েন্ট নির্বাচন করুন</label>
+              <select id="oVariant"></select>
+            </div>
+            <label>পাইকারি মূল্য</label>
+            <input type="text" id="oWholesale" disabled>
+            <label>আপনার বিক্রয় মূল্য (৳)</label>
+            <input type="number" step="0.01" id="oSellPrice" required>
+            <p id="profitDisplay"></p>
+            <hr>
+            <label>কাস্টমারের নাম</label>
+            <input type="text" id="oCustomerName" required>
+            <label>কাস্টমারের ফোন নাম্বার</label>
+            <input type="text" id="oCustomerPhone" required>
+            <label>কাস্টমারের ঠিকানা</label>
+            <textarea id="oCustomerAddress" rows="3" required></textarea>
+            <p id="oError" class="error" style="display:none;"></p>
+            <div style="display:flex; gap:10px;">
+              <button type="submit">অর্ডার সাবমিট করুন</button>
+              <button type="button" class="btn-secondary" id="cancelOrderBtn">বাতিল</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="view-orders" class="view" style="display:none;">
+        <h1>আমার অর্ডারসমূহ</h1>
+        <table class="table">
+          <thead><tr><th>প্রোডাক্ট</th><th>কাস্টমার</th><th>বিক্রয় মূল্য</th><th>প্রফিট</th><th>স্ট্যাটাস</th></tr></thead>
+          <tbody id="myOrderTableBody"><tr><td colspan="5">লোড হচ্ছে...</td></tr></tbody>
+        </table>
+      </div>
+
+      <div id="view-withdraw" class="view" style="display:none;">
+        <h1>উইথড্র</h1>
+        <form id="wForm" class="form">
+          <label>পরিমাণ (৳)</label>
+          <input type="number" step="0.01" id="wAmount" required>
+          <label>মাধ্যম</label>
+          <select id="wMethod">
+            <option value="bKash">বিকাশ</option>
+            <option value="Nagad">নগদ</option>
+            <option value="Bank">ব্যাংক</option>
+          </select>
+          <label>একাউন্ট নাম্বার / তথ্য</label>
+          <input type="text" id="wAccountInfo" required>
+          <p id="wError" class="error" style="display:none;"></p>
+          <button type="submit">রিকোয়েস্ট পাঠান</button>
+        </form>
+        <h2 style="margin-top:20px;">উইথড্র হিস্ট্রি</h2>
+        <table class="table">
+          <thead><tr><th>পরিমাণ</th><th>মাধ্যম</th><th>তথ্য</th><th>স্ট্যাটাস</th></tr></thead>
+          <tbody id="withdrawHistoryBody"><tr><td colspan="4">লোড হচ্ছে...</td></tr></tbody>
+        </table>
+      </div>
+
+    </section>
+  </div>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRS Drop Shipping</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="navbar">
+    <a href="index.html" class="brand">TRS Drop Shipping</a>
+    <nav id="navLinks"></nav>
+  </div>
+  <div class="container">
+    <h1>আমাদের প্রোডাক্টসমূহ</h1>
+    <p id="loginNotice" class="notice" style="display:none;">প্রোডাক্টের মূল্য দেখতে <a href="login.html">লগইন</a> অথবা <a href="register.html">রেজিস্ট্রেশন</a> করুন।</p>
+    <div class="grid" id="productGrid">
+      <p>লোড হচ্ছে...</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initNav } from './nav.js';
+    import { db } from './firebase-config.js';
+    import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const session = await initNav(null);
+    const grid = document.getElementById('productGrid');
+    const notice = document.getElementById('loginNotice');
+    if (!session) notice.style.display = 'block';
+
+    const snap = await getDocs(collection(db, 'products'));
+    if (snap.empty) {
+      grid.innerHTML = '<p>এখনো কোনো প্রোডাক্ট যোগ করা হয়নি।</p>';
+    } else {
+      grid.innerHTML = '';
+      for (const docSnap of snap.docs) {
+        const p = docSnap.data();
+        const images = p.images || [];
+        let priceHtml = '<p class="price locked">🔒 মূল্য দেখতে লগইন করুন</p>';
+        if (session) {
+          try {
+            const priceSnap = await getDoc(doc(db, 'products', docSnap.id, 'private', 'pricing'));
+            const price = priceSnap.exists() ? priceSnap.data().wholesalePrice : '-';
+            priceHtml = `<p class="price">৳ ${price}</p>`;
+          } catch (e) {
+            priceHtml = '<p class="price">মূল্য লোড করা যায়নি</p>';
+          }
+        }
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          ${images[0] ? `<img src="${images[0]}" alt="${p.name}">` : ''}
+          <h3>${p.name}</h3>
+          ${priceHtml}
+        `;
+        grid.appendChild(card);
+      }
+    }
+  </script>
+</body>
+</html>
